@@ -1,33 +1,33 @@
 # Image Context Bridge
 
-> 让没有视觉能力的模型也能「看懂」图片——截图、报错、图表，统一转成文字证据。
+> Let text-only models "see" images — convert screenshots, errors, and diagrams into structured text evidence.
 
-**解决的问题：** DeepSeek 等纯文本模型收到截图后只能回复「我无法处理图片」。这个工具在图片送到模型之前，先把它转成 OCR 提取的文字 + 文件信息 + 置信度，打包成结构化的文本证据。模型看到的是文字，不是图片。
+**The problem:** When you send a screenshot to DeepSeek or any text-only model, it says "I can't process images." This tool converts the image into OCR-extracted text before it reaches the model, so the model sees words instead of pixels.
 
 ---
 
-## 怎么做到的
+## How it works
 
-不依赖任何第三方 OCR 服务，优先用操作系统自带的能力：
+Zero third-party OCR services. Uses what your OS already has:
 
-| 平台 | OCR 引擎 | 需要安装什么 |
-|------|---------|------------|
-| macOS | Apple Vision | 什么都不用装 |
-| Windows | Windows 原生 OCR | 什么都不用装 |
-| Linux | PaddleOCR | 安装脚本自动装 |
-| 所有平台 | SVG 直接解析 XML | 零依赖 |
+| Platform | OCR Engine | Dependencies |
+|----------|-----------|-------------|
+| macOS | Apple Vision | None |
+| Windows | Windows native OCR | None |
+| Linux | PaddleOCR | Auto-installed |
+| All platforms | SVG XML parsing | None |
 
-PaddleOCR 在 macOS/Windows 上也可以选装，作为高精度备选方案。
+PaddleOCR is available as an optional high-accuracy backend on macOS and Windows.
 
-## 安装
+## Install
 
-macOS 和 Windows 上**只需要装 Pillow**（读图片尺寸用），OCR 引擎系统自带。
+On macOS and Windows, only [Pillow](https://python-pillow.org/) is needed for reading image metadata. The OCR engine is built into your OS.
 
 ```bash
 # macOS / Linux
 bash install.sh
 
-# 如果你想要 PaddleOCR 作为备选高精度引擎
+# With optional PaddleOCR for higher accuracy
 bash install.sh --with-paddleocr
 ```
 
@@ -35,51 +35,51 @@ bash install.sh --with-paddleocr
 # Windows
 .\install.ps1
 
-# 可选 PaddleOCR
+# Optional PaddleOCR
 .\install.ps1 -WithPaddleOCR
 ```
 
-## 使用
+## Usage
 
 ```bash
-# 最简用法
+# Basic
 image2context screenshot.png
 
-# 带上你的问题，上下文更完整
-image2context screenshot.png --question "这个报错是什么意思？"
+# Include your question for richer context
+image2context screenshot.png --question "What does this error mean?"
 
-# 如果不想走系统默认 OCR，可以手动指定
+# Override the default OCR backend
 image2context screenshot.png --ocr-backend paddleocr
 image2context screenshot.png --ocr-backend native
 ```
 
-输出是结构化的 Markdown 文本，可以直接贴给任何模型。
+Outputs structured Markdown you can paste directly to any model.
 
-## 设计原则
+## Design principle
 
-**不假装看见了不存在的东西。**
+**Don't pretend to see what isn't there.**
 
-OCR 只能提取文字，不能理解视觉内容。所以每个输出包里都明确区分了：
+OCR extracts text. It does not perform visual understanding. Every output packet explicitly separates:
 
-- `confirmed_facts` — OCR 确认提取到的内容
-- `extracted_text` — 提取的文字 + 置信度
-- `uncertainties` — 模型的局限和不确定之处
+- `confirmed_facts` — what OCR confirmed it found
+- `extracted_text` — the text, with confidence scores
+- `uncertainties` — limitations and unknowns
 
-最后一行永远是：「不要编造非文字的视觉细节。」
+The final line is always: "Do not invent non-text visual details."
 
-## 适合什么场景
+## Good for
 
-- 给 DeepSeek 等纯文本模型转发截图、终端报错、代码片段
-- 让不具备视觉能力的 Agent 处理图文混合的任务
-- 把 SVG 图表 / 菜单界面 / 设置页面转成可检索的文字
-- 任何「模型说它看不见图片」的情况
+- Forwarding screenshots, terminal errors, and code snippets to text-only models like DeepSeek
+- Giving non-vision agents the ability to handle image-text mixed tasks
+- Converting SVG diagrams, menus, and settings pages into searchable text
+- Any situation where the model says "I can't see images"
 
-## 不适合什么场景
+## Not for
 
-- 需要理解人脸、表情、场景、配色、构图的任务
-- 图片里没有什么文字，且你对文字以外的东西感兴趣
-- 模型本身就有视觉能力，且正常接收到了你的图片
+- Tasks requiring understanding of faces, emotions, scenes, colors, or composition
+- Images with minimal text where visual content is what matters
+- Models that already have native vision and received your image successfully
 
-## 许可
+## License
 
 MIT
