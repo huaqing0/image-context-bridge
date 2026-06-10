@@ -74,33 +74,33 @@ SVG 文本提取是独立路径，不使用 OCR 后端。
 
 ## 安装
 
-大多数人只需要一条命令：
-
-macOS 或 Linux：
+macOS / Linux：
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/huaqing0/image-context-bridge/main/install-remote.sh | bash
 ```
 
-这条命令只安装本地运行时和 CLI：
+默认安装内容：
 
-- `~/.image-context-bridge/`
-- `~/.local/bin/image2context`
-- `~/.local/bin/auto-image-fallback`
+- 本地运行时：`~/.image-context-bridge/`
+- CLI：`~/.local/bin/image2context`
+- Hook 辅助命令：`~/.local/bin/auto-image-fallback`
 
-默认不会写入 Claude Code、Codex 或其他 agent 的 Skill 目录。
+默认不安装任何 agent Skill。
 
-如果你要把 Skill 封装安装给某一个 agent，加一个目标参数：
+安装 Claude Code Skill：
 
 ```bash
-# Claude Code
 curl -fsSL https://raw.githubusercontent.com/huaqing0/image-context-bridge/main/install-remote.sh | bash -s -- --target claude
+```
 
-# Codex
+安装 Codex Skill：
+
+```bash
 curl -fsSL https://raw.githubusercontent.com/huaqing0/image-context-bridge/main/install-remote.sh | bash -s -- --target codex
 ```
 
-安装后重启对应 agent 应用，让它重新加载 Skill。
+安装完成后，重启对应 agent 应用。
 
 ## 快速验证
 

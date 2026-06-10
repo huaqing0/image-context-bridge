@@ -74,33 +74,33 @@ SVG text extraction is handled separately and does not use an OCR backend.
 
 ## Install
 
-Most users only need one command:
-
-macOS or Linux:
+macOS / Linux:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/huaqing0/image-context-bridge/main/install-remote.sh | bash
 ```
 
-This installs the local runtime and CLI commands only:
+Default install:
 
-- `~/.image-context-bridge/`
-- `~/.local/bin/image2context`
-- `~/.local/bin/auto-image-fallback`
+- Runtime: `~/.image-context-bridge/`
+- CLI: `~/.local/bin/image2context`
+- Hook helper: `~/.local/bin/auto-image-fallback`
 
-It does not write into Claude Code, Codex, or other agent Skill directories by default.
+No agent Skill is installed by default.
 
-If you want the Skill wrapper installed for one agent, add one target:
+Install the Claude Code Skill:
 
 ```bash
-# Claude Code
 curl -fsSL https://raw.githubusercontent.com/huaqing0/image-context-bridge/main/install-remote.sh | bash -s -- --target claude
+```
 
-# Codex
+Install the Codex Skill:
+
+```bash
 curl -fsSL https://raw.githubusercontent.com/huaqing0/image-context-bridge/main/install-remote.sh | bash -s -- --target codex
 ```
 
-Restart the agent app after installation so it can reload the Skill.
+Restart the target agent app after installation.
 
 ## Quick Check
 
