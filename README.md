@@ -74,9 +74,7 @@ SVG text extraction is handled separately and does not use an OCR backend.
 
 ## Install
 
-Recommended one-line install, no manual clone required.
-
-By default, the installer is agent-neutral: it installs only the local runtime and CLI commands. It does not write into Claude Code, Codex, or other agent skill directories unless you choose a target.
+Most users only need one command:
 
 macOS or Linux:
 
@@ -84,113 +82,42 @@ macOS or Linux:
 curl -fsSL https://raw.githubusercontent.com/huaqing0/image-context-bridge/main/install-remote.sh | bash
 ```
 
-Windows PowerShell:
+This installs the local runtime and CLI commands only:
 
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/huaqing0/image-context-bridge/main/install-remote.ps1 | iex"
-```
-
-Install a Skill wrapper for a specific agent:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/huaqing0/image-context-bridge/main/install-remote.sh | bash -s -- --target claude
-curl -fsSL https://raw.githubusercontent.com/huaqing0/image-context-bridge/main/install-remote.sh | bash -s -- --target codex
-curl -fsSL https://raw.githubusercontent.com/huaqing0/image-context-bridge/main/install-remote.sh | bash -s -- --target agents
-```
-
-Install all known Skill targets only if you explicitly want that:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/huaqing0/image-context-bridge/main/install-remote.sh | bash -s -- --target all
-```
-
-Windows PowerShell target selection example:
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -Command '$env:IMAGE_CONTEXT_BRIDGE_TARGET="claude"; irm https://raw.githubusercontent.com/huaqing0/image-context-bridge/main/install-remote.ps1 | iex'
-```
-
-Choose install paths:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/huaqing0/image-context-bridge/main/install-remote.sh | bash -s -- --app-dir "$HOME/Tools/image-context-bridge" --bin-dir "$HOME/bin"
-```
-
-Use a custom Skill root. The installer creates `<skill-root>/image-context`:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/huaqing0/image-context-bridge/main/install-remote.sh | bash -s -- --skill-dir "$HOME/.claude/skills"
-```
-
-Optional PaddleOCR install:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/huaqing0/image-context-bridge/main/install-remote.sh | bash -s -- --with-paddleocr
-```
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -Command '$env:IMAGE_CONTEXT_BRIDGE_WITH_PADDLEOCR="1"; irm https://raw.githubusercontent.com/huaqing0/image-context-bridge/main/install-remote.ps1 | iex'
-```
-
-Skip PaddleOCR on Linux if you only want metadata/SVG extraction or another manually installed backend:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/huaqing0/image-context-bridge/main/install-remote.sh | bash -s -- --no-paddleocr
-```
-
-Manual clone install is also supported:
-
-```bash
-git clone https://github.com/huaqing0/image-context-bridge.git
-cd image-context-bridge
-bash install.sh
-```
-
-```powershell
-git clone https://github.com/huaqing0/image-context-bridge.git
-cd image-context-bridge
-.\install.ps1
-```
-
-The installer creates:
-
-- `~/.image-context-bridge/` for the local app files and Python virtual environment.
-- `~/.image-context-bridge/testdata/sample.svg` for post-install verification.
+- `~/.image-context-bridge/`
 - `~/.local/bin/image2context`
 - `~/.local/bin/auto-image-fallback`
 
-If you pass `--target claude`, `--target codex`, `--target agents`, or `--target all`, it also creates the selected `<skill-root>/image-context` directory.
+It does not write into Claude Code, Codex, or other agent Skill directories by default.
 
-Make sure `~/.local/bin` is in your `PATH`. Restart Claude Code, Codex, or your agent app after installation so it can reload the Skill.
+If you want the Skill wrapper installed for one agent, add one target:
 
-## Post-Install Check
+```bash
+# Claude Code
+curl -fsSL https://raw.githubusercontent.com/huaqing0/image-context-bridge/main/install-remote.sh | bash -s -- --target claude
 
-This section is not the normal daily workflow. It only verifies that the install works by using the sample SVG copied into `~/.image-context-bridge/testdata/`.
+# Codex
+curl -fsSL https://raw.githubusercontent.com/huaqing0/image-context-bridge/main/install-remote.sh | bash -s -- --target codex
+```
 
-Step 1: check that the `image2context` command works:
+Restart the agent app after installation so it can reload the Skill.
+
+## Quick Check
+
+Run the sample SVG through the CLI:
 
 ```bash
 image2context ~/.image-context-bridge/testdata/sample.svg --json
 ```
 
-If the output contains the two lines below, the CLI can read the image and extract text:
+If the output contains the two lines below, the CLI is installed and can extract text:
 
 ```text
 WebSocket handshake timeout
 Reconnecting...
 ```
 
-Step 2: check that the fallback hook works:
-
-```bash
-echo '{"message":"Please analyze ~/.image-context-bridge/testdata/sample.svg","model_supports_images":false}' | auto-image-fallback
-```
-
-This simulates a model that does not support images. If `action` is `replace_with_context`, the hook is replacing the image with a text evidence packet:
-
-```json
-{"action":"replace_with_context","contexts":["..."]}
-```
+For Windows, custom paths, PaddleOCR, or manual clone installation, see [INSTALL.md](INSTALL.md).
 
 ## Manual CLI Usage
 
@@ -242,13 +169,7 @@ image2context screenshot.png --tesseract-lang eng+chi_sim
 
 ## Skill Usage
 
-After installation, skill-aware agents can load `image-context`.
-
-The generic install command does not install an agent Skill by default. To install the Claude Code wrapper, run:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/huaqing0/image-context-bridge/main/install-remote.sh | bash -s -- --target claude
-```
+After installation with `--target claude`, `--target codex`, or another Skill target, skill-aware agents can load `image-context`.
 
 Automatic triggering is best-effort. The Skill can be invoked implicitly when an agent sees a local image path and the model is known to be text-only or image input has failed. If the model's image capability is unknown and the agent can send images directly, the intended flow is to try direct image input first, then fallback to `image2context` only if direct input fails.
 
