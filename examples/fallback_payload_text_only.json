@@ -1,0 +1,4 @@
+{
+  "model_supports_images": false,
+  "message": "Please analyze ./testdata/sample.svg"
+}
