@@ -4,7 +4,7 @@
 
 Image Context Bridge is a small local workflow for text-only or image-unsupported AI models. It converts an image file into a structured text evidence packet, then asks the model to reason only from extracted text, metadata, and stated limitations.
 
-It is useful when you want to use models such as DeepSeek, local LLMs, or other text-only agents on screenshots, error dialogs, SVGs, and image files without asking the model to invent visual details it cannot actually see.
+It is useful for using models such as DeepSeek, local LLMs, or other text-only agents on screenshots, error dialogs, SVGs, and image files without asking the model to invent visual details it cannot actually see.
 
 ## What It Includes
 
@@ -43,7 +43,7 @@ Result:
 
 OCR runs locally. This project does not upload image files, call a cloud OCR API, require an API key, or use a quota.
 
-If you use a separate agent that first sends the original image to a cloud model, that behavior is controlled by that agent, not by Image Context Bridge. To avoid that, call `image2context` directly or configure your agent to use the fallback workflow first.
+A separate agent may send the original image to a cloud model before this workflow runs. That behavior is controlled by the agent, not by Image Context Bridge. To avoid it, call `image2context` directly or configure the agent to use the fallback workflow first.
 
 ## Supported Inputs
 
@@ -121,31 +121,31 @@ For Windows, custom paths, PaddleOCR, or manual clone installation, see [INSTALL
 
 ## Manual CLI Usage
 
-`CLI` means terminal command. Most users do not need to call it manually if Claude Code, Codex, or another agent already triggers the `image-context` Skill.
+`CLI` means terminal command. When Claude Code, Codex, or another agent already triggers the `image-context` Skill, no manual CLI call is required.
 
-Use the CLI manually when:
+Use the CLI for:
 
-- your agent does not trigger the Skill automatically.
-- you want to convert an image into text first, then paste the result into DeepSeek or another text-only model.
+- agents that do not trigger the Skill automatically.
+- converting an image into text before pasting it into DeepSeek or another text-only model.
 
-Replace `screenshot.png` with the real path to your image.
+Replace `screenshot.png` with the real image path.
 
 ```bash
 # Most common: convert an image into a Markdown evidence packet
 image2context screenshot.png
 
-# Include your specific question in the packet
+# Include a specific question in the packet
 image2context error.png --question "Why did the build fail?"
 
 # Output JSON for scripts or hooks
 image2context screenshot.png --json
 ```
 
-The most important field is `context_for_text_model`. If you are using DeepSeek manually, copy that text into the model.
+The most important field is `context_for_text_model`. For manual DeepSeek use, copy that text into the model.
 
 ### Advanced CLI Options
 
-Most users can skip this section. These options are useful only when the default OCR backend is not good enough or when debugging backend behavior.
+Use these options when the default OCR backend is not good enough or when debugging backend behavior.
 
 ```bash
 # Disable OCR and return only file information and limitations
@@ -185,7 +185,7 @@ For DeepSeek or another text-only model inside an agent, the useful behavior is:
 2. The `image-context` Skill tells it to run `image2context <image_path>`.
 3. The agent answers from `context_for_text_model`, not from imagined visual details.
 
-If the agent does not trigger the Skill automatically, run the CLI yourself and paste the output into the model.
+When the agent does not trigger the Skill automatically, run the CLI and paste the output into the model.
 
 Current trigger boundaries:
 
@@ -198,7 +198,7 @@ Current trigger boundaries:
 
 `auto-image-fallback` reads JSON from stdin and returns a JSON action. It does not probe the model by itself; it follows `model_supports_images` or `last_error`.
 
-Known image support:
+Known unsupported image input:
 
 ```bash
 echo '{"message":"Check ./error.png","model_supports_images":false}' | auto-image-fallback
@@ -245,7 +245,7 @@ JSON output contains:
 
 `image2context: command not found`
 
-Add `~/.local/bin` to your `PATH`, then restart your shell or agent app.
+Add `~/.local/bin` to `PATH`, then restart the shell or agent app.
 
 ```bash
 export PATH="$HOME/.local/bin:$PATH"

@@ -1,6 +1,6 @@
 # Install Options
 
-The README keeps only the common install commands. This file lists less common options.
+The README keeps common install commands. This file lists additional install options.
 
 ## Windows
 
@@ -22,7 +22,7 @@ Install into the generic agents Skill directory:
 curl -fsSL https://raw.githubusercontent.com/huaqing0/image-context-bridge/main/install-remote.sh | bash -s -- --target agents
 ```
 
-Install all known Skill targets only if you explicitly want that:
+Install all known Skill targets:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/huaqing0/image-context-bridge/main/install-remote.sh | bash -s -- --target all
@@ -50,7 +50,7 @@ curl -fsSL https://raw.githubusercontent.com/huaqing0/image-context-bridge/main/
 powershell -NoProfile -ExecutionPolicy Bypass -Command '$env:IMAGE_CONTEXT_BRIDGE_WITH_PADDLEOCR="1"; irm https://raw.githubusercontent.com/huaqing0/image-context-bridge/main/install-remote.ps1 | iex'
 ```
 
-Skip PaddleOCR on Linux if you only want metadata/SVG extraction or another manually installed backend:
+Skip PaddleOCR on Linux for metadata/SVG extraction only, or when managing the OCR backend separately:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/huaqing0/image-context-bridge/main/install-remote.sh | bash -s -- --no-paddleocr

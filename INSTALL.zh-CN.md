@@ -1,6 +1,6 @@
 # 安装选项
 
-README 只保留最常用安装命令。这里放不常用的安装参数。
+README 保留常用安装命令。本文档列出其他安装参数。
 
 ## Windows
 
@@ -22,7 +22,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -Command '$env:IMAGE_CONTEXT_BRIDG
 curl -fsSL https://raw.githubusercontent.com/huaqing0/image-context-bridge/main/install-remote.sh | bash -s -- --target agents
 ```
 
-只有明确想一次装到所有已知目录时，才使用：
+一次安装到所有已知 Skill 目录：
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/huaqing0/image-context-bridge/main/install-remote.sh | bash -s -- --target all
@@ -50,7 +50,7 @@ curl -fsSL https://raw.githubusercontent.com/huaqing0/image-context-bridge/main/
 powershell -NoProfile -ExecutionPolicy Bypass -Command '$env:IMAGE_CONTEXT_BRIDGE_WITH_PADDLEOCR="1"; irm https://raw.githubusercontent.com/huaqing0/image-context-bridge/main/install-remote.ps1 | iex'
 ```
 
-如果 Linux 上只想使用 metadata/SVG 提取，或想自己管理 OCR 后端，可以跳过 PaddleOCR：
+Linux 如仅需 metadata/SVG 提取，或需要自行管理 OCR 后端，可以跳过 PaddleOCR：
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/huaqing0/image-context-bridge/main/install-remote.sh | bash -s -- --no-paddleocr
@@ -72,7 +72,7 @@ cd image-context-bridge
 
 ## Hook 验证
 
-这条命令是在模拟“当前模型不支持图片”。如果输出里的 `action` 是 `replace_with_context`，说明 hook 会把图片替换成文本证据包：
+这条命令用于模拟“当前模型不支持图片”。如果输出里的 `action` 是 `replace_with_context`，说明 hook 会把图片替换成文本证据包：
 
 ```bash
 echo '{"message":"Please analyze ~/.image-context-bridge/testdata/sample.svg","model_supports_images":false}' | auto-image-fallback
