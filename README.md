@@ -41,18 +41,21 @@ Result: the model reads the error text and suggests a fix — without ever
 
 ## Install
 
+One command. The script handles all dependencies — you don't need to install anything manually.
+
 ```bash
 bash install.sh
 ```
 
-| Platform | OCR engine | What's installed |
-|----------|-----------|-----------------|
-| macOS | Apple Vision | Pillow |
-| Windows | Windows OCR | Pillow |
+| Platform | OCR engine | Installed by script |
+|----------|-----------|-------------------|
+| macOS | Apple Vision (built-in) | Pillow |
+| Windows | Windows OCR (built-in) | Pillow |
 | Linux | PaddleOCR | Pillow + PaddleOCR |
 
+Optionally add PaddleOCR on any platform for higher accuracy on complex layouts:
+
 ```bash
-# Optional: higher accuracy on any platform
 bash install.sh --with-paddleocr
 ```
 
