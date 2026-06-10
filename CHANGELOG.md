@@ -4,7 +4,7 @@
 
 - Renamed the project to TextVision.
 - Unified the CLI, hook helper, Skill name, install paths, and environment variables around `textvision`.
-- Added a Codex plugin manifest.
+- Reframed the project as a generic local plugin package rather than a single-agent Skill.
 
 ## v0.3.0
 

@@ -11,9 +11,8 @@ TextVision 是一个本地插件，用来帮助纯文本模型或不支持图片
 - `textvision`：CLI 工具，输入图片路径，输出 Markdown 或 JSON 证据包。
 - `textvision-fallback`：hook 辅助工具，根据外部传入的模型能力信息或图片输入失败错误，决定直传图片还是替换成文本上下文。
 - `skills/textvision`：给 Claude Code、Codex 和其他支持 Skill 的 agent 使用的工作流封装。
-- `.codex-plugin/plugin.json`：Codex 插件清单。
 
-TextVision 的核心能力由本地 CLI 提供；Skill 和插件清单负责把这套能力接入 agent 工作流。
+TextVision 的核心能力由本地 CLI 提供；hook 和 Skill wrapper 负责把这套能力接入 agent 工作流。
 
 ## 工作方式
 

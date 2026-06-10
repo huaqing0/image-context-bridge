@@ -11,9 +11,8 @@ It is useful for using models such as DeepSeek, local LLMs, or other text-only a
 - `textvision`: a CLI that reads an image path and outputs Markdown or JSON evidence.
 - `textvision-fallback`: a hook helper that uses caller-provided model capability or image-input failure errors to decide whether to pass an image through or replace it with text context.
 - `skills/textvision`: a Skill wrapper for agents such as Claude Code, Codex, and other skill-aware tools.
-- `.codex-plugin/plugin.json`: a Codex plugin manifest.
 
-The local CLI provides the core extraction capability. The Skill and plugin manifest connect that capability to agent workflows.
+The local CLI provides the core extraction capability. The hook helper and Skill wrapper connect that capability to agent workflows.
 
 ## How It Works
 
