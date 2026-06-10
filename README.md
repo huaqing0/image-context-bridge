@@ -8,15 +8,15 @@
 
 ## What this skill does
 
+When you send an image to a text-only model, this skill automatically:
+
 1. **Detects** whether the model has vision capability
 2. If yes — passes the image through untouched
-3. If no — runs OCR to extract all visible text from the image
-4. Packages the result as a structured text evidence packet
-5. Sends it to the model, which can now read and reason from it
+3. If no — runs OCR, extracts all visible text from the image, and packages it
+   as a structured text evidence packet
 
-The model never sees "I can't process images." It receives structured text with
-extracted content, confidence scores, file metadata, and a hard rule: *do not
-invent visual details that weren't found in the text.*
+The model receives readable text with extracted content, confidence scores,
+and clear boundaries — so it doesn't invent visual details that aren't there.
 
 ---
 
