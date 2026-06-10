@@ -31,6 +31,18 @@ BARE_IMAGE_PATH_RE = re.compile(
 IMAGE2CONTEXT_TIMEOUT_SECONDS = 120
 
 
+def normalize_image_support(value):
+    if isinstance(value, bool) or value is None:
+        return value
+    if isinstance(value, str):
+        normalized = value.strip().lower()
+        if normalized in {"true", "yes", "1", "supported", "supports_images"}:
+            return True
+        if normalized in {"false", "no", "0", "unsupported", "text_only", "text-only", "no_images", "no-images"}:
+            return False
+    return None
+
+
 def find_image_paths(text: str) -> List[str]:
     candidates = []
     covered_spans = []
@@ -92,7 +104,7 @@ def main() -> int:
         return 0
 
     message = payload.get("message", "")
-    model_supports_images = payload.get("model_supports_images", None)
+    model_supports_images = normalize_image_support(payload.get("model_supports_images", None))
     last_error = (payload.get("last_error") or "").lower()
 
     paths = find_image_paths(message)
@@ -102,10 +114,25 @@ def main() -> int:
 
     image_error_markers = [
         "image input not supported",
+        "image inputs are not supported",
         "unsupported media type",
+        "unsupported image",
         "does not support image",
+        "does not accept images",
         "cannot process image",
         "image unsupported",
+        "images are not supported",
+        "vision is not supported",
+        "multimodal input is not supported",
+        "only text input",
+        "不支持图片",
+        "不支持图像",
+        "无法处理图片",
+        "无法处理图像",
+        "不能处理图片",
+        "不能处理图像",
+        "图片输入不支持",
+        "图像输入不支持",
     ]
     failed_due_to_image = any(m in last_error for m in image_error_markers)
 

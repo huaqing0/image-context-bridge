@@ -1,23 +1,27 @@
 ---
 name: image-context
-description: Use this skill when an image is sent to a text-only or image-unsupported model. Convert the image into OCR/text evidence before answering.
+description: Use this skill when a local image path or image file must be handled by a text-only model, an image-unsupported model, or after image input fails.
 ---
 
 # Image Context Bridge
 
-Use this skill when the current model cannot directly process images, or when image input fails.
+Use this skill when the current model cannot directly process images, or when image input fails. The skill does not probe model capability by itself; it provides the fallback workflow.
 
 ## Trigger rules
 
 Use this skill when:
-- The user provides an image path or image file.
+- The user provides a local image path or image file, and the current model cannot process images.
 - The target model cannot process images.
 - Image input fails with an unsupported-image/media error.
 - The model's image capability is unknown and the image cannot be passed directly.
+- The user wants to use a text-only model such as DeepSeek on image content.
 
 Do not use this skill when:
 - The active model clearly supports native image understanding and successfully received the image.
 - The user only asks for image file metadata.
+- The user provided only a remote URL and no local image file is available.
+
+If image capability is unknown and direct image input is available, try direct image input first. Use this skill only if direct input is unavailable or fails with an image/media unsupported error.
 
 ## Required action
 
@@ -32,6 +36,8 @@ If the user asked a specific question about the image, include it:
 ```bash
 image2context <image_path> --question "<user question>"
 ```
+
+If no local image path is available, explain that `image2context` needs a local file path before it can extract evidence.
 
 ## OCR backend policy
 

@@ -9,17 +9,19 @@ It is useful when you want to use models such as DeepSeek, local LLMs, or other 
 ## What It Includes
 
 - `image2context`: a CLI that reads an image path and outputs Markdown or JSON evidence.
-- `auto-image-fallback`: a hook helper that decides whether to pass an image through or replace it with text context.
+- `auto-image-fallback`: a hook helper that uses caller-provided model capability or image-input failure errors to decide whether to pass an image through or replace it with text context.
 - `skills/image-context`: a Skill wrapper for agents such as Claude Code, Codex, and other skill-aware tools.
 
 The Skill is only a workflow wrapper. The actual extraction is done by the local `image2context` command.
 
 ## How It Works
 
-1. You provide an image path, or an agent detects one in a message.
-2. If the active model can handle images, the image can be passed through directly.
-3. If the model is text-only or image input fails, `image2context` extracts OCR/SVG text locally.
+1. You provide a local image path, or an agent detects one in a message.
+2. If the agent already knows the model can handle images, the image can be passed through directly.
+3. If the model is text-only, image input is unavailable, or image input fails, `image2context` extracts OCR/SVG text locally.
 4. The output packet includes file metadata, extracted text, confidence values when available, confirmed facts, limitations, and an instruction not to invent non-text visual details.
+
+Image Context Bridge does not actively probe every model to discover whether it has vision. Automatic fallback depends on the agent or hook providing `model_supports_images`, or on a previous image-input error such as "image input not supported".
 
 Example:
 
@@ -200,6 +202,8 @@ image2context screenshot.png --tesseract-lang eng+chi_sim
 
 After installation, skill-aware agents can load `image-context`.
 
+Automatic triggering is best-effort. The Skill can be invoked implicitly when an agent sees a local image path and the model is known to be text-only or image input has failed. If the model's image capability is unknown and the agent can send images directly, the intended flow is to try direct image input first, then fallback to `image2context` only if direct input fails.
+
 For Claude Code or similar agents, use a prompt like:
 
 ```text
@@ -214,9 +218,16 @@ For DeepSeek or another text-only model inside an agent, the useful behavior is:
 
 If the agent does not trigger the Skill automatically, run the CLI yourself and paste the output into the model.
 
+Current trigger boundaries:
+
+- Works best with local image paths or uploaded files that the agent exposes as local paths.
+- Does not download remote image URLs by itself.
+- Does not run for metadata-only requests.
+- Does not force agents to use the Skill; the host agent must support Skills and implicit invocation.
+
 ## Hook Usage
 
-`auto-image-fallback` reads JSON from stdin and returns a JSON action.
+`auto-image-fallback` reads JSON from stdin and returns a JSON action. It does not probe the model by itself; it follows `model_supports_images` or `last_error`.
 
 Known image support:
 
@@ -235,6 +246,8 @@ When support is unknown, the hook returns `try_direct_first`. Call it again with
 ```bash
 echo '{"message":"Check ./error.png","model_supports_images":null,"last_error":"image input not supported"}' | auto-image-fallback
 ```
+
+The hook recognizes common English and Chinese image-unsupported errors, such as "image input not supported" and "不支持图片输入".
 
 ## Output Shape
 
@@ -256,6 +269,7 @@ JSON output contains:
 - Non-text objects, layout meaning, charts, handwriting, UI state, colors, emotion, and visual style may be missed.
 - OCR accuracy depends on image quality, language support, fonts, orientation, and backend.
 - The Skill wrapper does not force every agent to use the workflow. Some tools require a restart or explicit prompt.
+- Automatic fallback depends on model capability metadata or a recognizable image-input error; it is not universal model capability detection.
 - On Windows, native OCR availability depends on installed language packs and Windows OCR support.
 
 ## Troubleshooting

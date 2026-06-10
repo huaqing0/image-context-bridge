@@ -133,6 +133,25 @@ class TestFallbackHook:
         assert data["action"] == "replace_with_context"
         assert "image2context command not found" in data["contexts"][0]
 
+    def test_string_image_support_flag_is_normalized(self):
+        data = _run_hook(
+            {"model_supports_images": "true", "message": "Please analyze sample.svg"},
+            cwd=SAMPLE_SVG.parent,
+        )
+        assert data["action"] == "pass_through"
+
+    def test_chinese_image_error_triggers_fallback(self):
+        data = _run_hook(
+            {
+                "model_supports_images": None,
+                "message": "Please analyze sample.svg",
+                "last_error": "当前模型不支持图片输入",
+            },
+            cwd=SAMPLE_SVG.parent,
+        )
+        assert data["action"] == "replace_with_context"
+        assert data["contexts"]
+
     def test_invalid_json_is_structured(self):
         out = subprocess.check_output([sys.executable, str(HOOK)], input="{", text=True)
         data = json.loads(out)
