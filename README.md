@@ -1,6 +1,8 @@
 # Image Context Bridge
 
-> Let text-only models "see" images — convert screenshots, errors, and diagrams into structured text evidence.
+[中文](README.zh-CN.md)
+
+> Let text-only models "see" images
 
 **The problem:** When you send a screenshot to DeepSeek or any text-only model, it says "I can't process images." This tool converts the image into OCR-extracted text before it reaches the model, so the model sees words instead of pixels.
 
